@@ -2,6 +2,7 @@
 #include "hardware/gpio.h"
 #include "hardware/pwm.h"
 #include <hardware/clocks.h>
+#include <cstdint>
 
 // Constructor
 DRV::DRV(uint8_t pin_a, uint8_t pin_b, uint32_t freq, float clkdiv, int eep_pin, bool eep_state)
@@ -19,34 +20,34 @@ DRV::DRV(uint8_t pin_a, uint8_t pin_b, uint32_t freq, float clkdiv, int eep_pin,
     gpio_set_function(pin_b, GPIO_FUNC_PWM);
 
     // Get the PWM slice number for each pin
-    slice_a = pwm_gpio_to_slice_num(pin_a);
-    slice_b = pwm_gpio_to_slice_num(pin_b);
+    _slice_a = pwm_gpio_to_slice_num(pin_a);
+    _slice_b = pwm_gpio_to_slice_num(pin_b);
 
     // Caclulate PWM channel, A is even pins, B is odd pins
-    channel_a = pin_a % 2; // 0 for even pins, 1 for odd pins
-    channel_b = pin_b % 2; // 0 for even pins, 1 for odd pins
+    _channel_a = pin_a % 2; // 0 for even pins, 1 for odd pins
+    _channel_b = pin_b % 2; // 0 for even pins, 1 for odd pins
 
     // Set clock devider
-    pwm_set_clkdiv(slice_a, clkdiv);
-    pwm_set_clkdiv(slice_b, clkdiv);
+    pwm_set_clkdiv(_slice_a, clkdiv);
+    pwm_set_clkdiv(_slice_b, clkdiv);
 
     // Get the clock speed of the system (in Hz)
     uint32_t clock_freq = clock_get_hz(clk_sys);
 
     // Calculate the PWM wrap value for the desired frequency
-    wrap = clock_freq / (freq * clkdiv) - 1; // -1 because counter begins at 0
+    _wrap = clock_freq / (freq * clkdiv) - 1; // -1 because counter begins at 0
 
     // Configure the PWM slices with the given frequency
-    pwm_set_wrap(slice_a, wrap);
-    pwm_set_wrap(slice_b, wrap);
+    pwm_set_wrap(_slice_a, _wrap);
+    pwm_set_wrap(_slice_b, _wrap);
 
     // Begin motor in coasting mode (0% duty cycle)
-    pwm_set_chan_level(slice_a, channel_a, 0);
-    pwm_set_chan_level(slice_b, channel_b, 0);
+    pwm_set_chan_level(_slice_a, _channel_a, 0);
+    pwm_set_chan_level(_slice_b, _channel_b, 0);
 
     // Enable the PWM slices
-    pwm_set_enabled(slice_a, true);
-    pwm_set_enabled(slice_b, true);
+    pwm_set_enabled(_slice_a, true);
+    pwm_set_enabled(_slice_b, true);
 }
 
 // Method to get the raw 16-bit value of the duty cycle
@@ -66,16 +67,16 @@ uint8_t DRV::getDutyPercent()
 // Method to set the duty cycle, returns true if successful
 bool DRV::setDuty(uint16_t duty, bool direction)
 {
-    duty = duty * wrap / 0xFFFF; // Scale duty to the wrap value
+    duty = duty * _wrap / 0xFFFF; // Scale duty to the wrap value
     if (direction)
     {
-        pwm_set_chan_level(slice_a, channel_a, duty);
-        pwm_set_chan_level(slice_b, channel_b, 0);
+        pwm_set_chan_level(_slice_a, _channel_a, duty);
+        pwm_set_chan_level(_slice_b, _channel_b, 0);
     }
     else
     {
-        pwm_set_chan_level(slice_a, channel_a, 0);
-        pwm_set_chan_level(slice_b, channel_b, duty);
+        pwm_set_chan_level(_slice_a, _channel_a, 0);
+        pwm_set_chan_level(_slice_b, _channel_b, duty);
     }
-    return true;
+    return 0;
 }

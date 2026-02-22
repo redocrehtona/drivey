@@ -1,5 +1,5 @@
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef CFG_HPP
+#define CFG_HPP
 
 // motor0 configuration
 #define MOTOR0_PIN1 2
@@ -8,5 +8,9 @@
 #define MOTOR0_CLKDIV 10.0f // Clock divider for PWM, higher values allow for lower frequencies but reduce resolution
 #define MOTOR0_EEP 5 // Sleep pin, set to -1 if not used
 #define MOTOR0_EEP_STATE true // State of pin to enable driver, true for HIGH
+
+// enc0 configuration
+#define ENC0_PIN1 28 // A phase pin, B phase must be connected to the next pin (29 in this case)
+#define ENC0_RPM_SCALE 300 // pulses per revolution (30) * gear ratio (10)
 
 #endif

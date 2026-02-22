@@ -34,7 +34,7 @@ project(pico-drivey C CXX ASM)
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
-add_executable(pico-drivey src/main.cpp src/drv.cpp)
+add_executable(pico-drivey src/main.cpp src/drv.cpp src/enc.cpp)
 
 pico_set_program_name(pico-drivey "pico-drivey")
 pico_set_program_version(pico-drivey "0.1")
@@ -43,9 +43,14 @@ pico_set_program_version(pico-drivey "0.1")
 pico_enable_stdio_uart(pico-drivey 0)
 pico_enable_stdio_usb(pico-drivey 1)
 
+# PIO
+pico_generate_pio_header(pico-drivey ${CMAKE_CURRENT_LIST_DIR}/pio/quadrature_encoder_substep.pio)
+
 # Add the standard library to the build
 target_link_libraries(pico-drivey
         pico_stdlib
+        pico_multicore
+        hardware_pio
         hardware_pwm)
 
 # Add the standard include files to the build

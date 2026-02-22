@@ -4,11 +4,11 @@
 
 class DRV {
     private:
-        uint8_t slice_a;
-        uint8_t slice_b;
-        uint8_t channel_a;
-        uint8_t channel_b;
-        uint32_t wrap;
+        uint8_t _slice_a;
+        uint8_t _slice_b;
+        uint8_t _channel_a;
+        uint8_t _channel_b;
+        uint32_t _wrap;
     public:
         DRV(uint8_t pin_a, 
             uint8_t pin_b, 
