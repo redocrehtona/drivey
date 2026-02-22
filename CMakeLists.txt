@@ -37,7 +37,7 @@ pico_sdk_init()
 add_executable(pico-drivey src/main.cpp src/drv.cpp src/enc.cpp src/pid.cpp src/i2c.cpp)
 
 pico_set_program_name(pico-drivey "pico-drivey")
-pico_set_program_version(pico-drivey "0.1")
+pico_set_program_version(pico-drivey "1.0")
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(pico-drivey 0)
